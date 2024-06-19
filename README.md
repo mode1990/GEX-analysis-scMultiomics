@@ -1,5 +1,5 @@
 # GEX-analysis-scMultiomics
-Multiomics Pipeline by Mo Dehestani for FOUNDON-1c: RNA Analysis Only
+Multiomics Pipeline by Mo De for FOUNDON-1c: RNA Analysis Only
 # README for RNA and ATAC Data Analysis Pipeline
 
 ## Overview

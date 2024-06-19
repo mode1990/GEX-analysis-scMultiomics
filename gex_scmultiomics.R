@@ -71,12 +71,12 @@ pbmc <- RunSVD(pbmc)
 pbmc <- RunUMAP(pbmc, reduction = 'lsi', dims = 2:50, reduction.name = "umap.atac", reduction.key = "atacUMAP_")
 
 # Metadata assignment
-pbmc@meta.data$Sample <- "Sample14"
-pbmc@meta.data$Cond <- "GBA"
-pbmc@meta.data$Clone <- "PL1C7"
+pbmc@meta.data$Sample <- "SampleNr"
+pbmc@meta.data$Cond <- "Mut"
+pbmc@meta.data$Clone <- "CloneNr"
 
 # Save preprocessed object
-saveRDS(pbmc, file = "/data/dehestani/multiome_aim1c/preprocessed_RNA_ATAC_objects_before_merge/s14.rds")
+saveRDS(pbmc, file = "path/to/savingdirectory/sampleNr.rds")
 
 # Read individual samples
 s1 <- readRDS("s1.rds")
@@ -94,10 +94,11 @@ s12 <- readRDS("s12.rds")
 s13 <- readRDS("s13.rds")
 s14 <- readRDS("s14.rds")
 
+# Proceed only with GEX
 # Extract the RNA assay counts
 rna_counts <- s14[["RNA"]]
 
-# Create a new Seurat object with only the RNA counts
+# Create a new Seurat object with only the RNA raw counts
 rna_seurat_obj <- CreateSeuratObject(counts = rna_counts)
 
 # Transfer metadata if needed
@@ -112,7 +113,7 @@ saveRDS(merged, file = "/data/dehestani/multiome_aim1c/Only_RNA_analysis/objects
 # Load merged object
 pbmc <- readRDS("/data/dehestani/multiome_aim1c/Only_RNA_analysis/objects_singular_and_merged/merged_RNA_preprocessed.rds")
 
-# Harmony for integration
+# SCT normalization and Harmony for integration
 DefaultAssay(pbmc) <- "RNA"
 pbmc <- SplitObject(pbmc, split.by = "Sample")
 for (i in 1:length(pbmc)) {
@@ -152,7 +153,6 @@ pbmc <- FindSubCluster(
 
 DimPlot(pbmc)
 DimPlot(pbmc, reduction = "umap", group.by = "sub.cluster")
-saveRDS(pbmc, file = "/data/dehestani/multiome_aim1c/Only_RNA_analysis/processed_objects/Aim1c_full_processed_res01_harmony_lognorm.rds")
 
 # Cluster identity
 DefaultAssay(pbmc) <- "SCT"
@@ -175,4 +175,4 @@ pbmc <- RenameIdents(pbmc, `0` = "Early-neuron Progenitor", `1` = "Late-neuron P
 DimPlot(pbmc, reduction = "umap", label = TRUE, pt.size = 0.5)
 
 # Save the final object
-saveRDS(pbmc, file = "/data/dehestani/multiome_aim1c/Only_RNA_analysis/processed_objects/Aim1c_full_processed_final.rds")
+saveRDS(pbmc, file = "path/to/savingdirectory/processed.rds")

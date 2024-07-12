@@ -174,5 +174,39 @@ Idents(pbmc) <- "sub.cluster"
 pbmc <- RenameIdents(pbmc, `0` = "Early-neuron Progenitor", `1` = "Late-neuron Progenitor", `2` = "Dopaminergic Neurons", `3` = "Immature Dopaminergic Neurons", `4` = "Proliferating Floor Plate Progenitors", `5` = "Neuroepithelial-like Cells", `6` = "Ependymal-like Cells")
 DimPlot(pbmc, reduction = "umap", label = TRUE, pt.size = 0.5)
 
+#check if data is already normalized
+
+pbmc[['RNA']]@data@x
+
+pbmc[['SCT']]@data@x
+
+# metadata visualization
+ 
+md <- pbmc@meta.data %>% as.data.table
+#get the pct of cells for mutated vs isogenic
+prop.table(table(Cluster.IDN@meta.data$NewCond)) * 100 
+prop.table(table(Cluster.DAN@meta.data$NewCond)) * 100 
+prop.table(table(pbmc@meta.data$Cond)) * 100 
+
+ 
+#proportions barplot
+ggplot(pbmc@meta.data, aes(x=Clone, fill=CellType)) + geom_bar(position = "fill") + RotatedAxis() 
+ggplot(pbmc@meta.data, aes(x=Sample, fill=CellType)) + geom_bar(position = "fill") + RotatedAxis() 
+ggplot(pbmc@meta.data, aes(x=Cond, fill=CellType)) + geom_bar(position = "fill") + RotatedAxis() 
+
+
+# plotting for some relevant genes, here TH as an example
+DefaultAssay(pbmc) <- "SCT"
+FeaturePlot(pbmc, features = "TH", reduction = "umap")  
+DotPlot(pbmc, features = "TH") + RotatedAxis()
+
+#calculate pct of TH expressing cells
+th_expression <- FetchData(pbmc, vars = "TH")
+expressing_cells <- sum(th_expression$TH > 0)
+total_cells <- ncol(pbmc)
+(expressing_cells / total_cells) * 100
+
+
+
 # Save the final object
 saveRDS(pbmc, file = "path/to/savingdirectory/processed.rds")
